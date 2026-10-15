@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dropbox File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            max-width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        h2 {
+            color: #0061ff;
+        }
+
+        input, button {
+            margin: 15px;
+        }
+
+        button {
+            background: #0061ff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Dropbox File Upload</h2>
+        <p>Select a file to upload to Dropbox</p>
+
+        <input type="file" id="fileInput">
+        <br>
+        <button onclick="uploadFile()">Upload File</button>
+
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function uploadFile() {
+            const file = document.getElementById("fileInput").files[0];
+            const result = document.getElementById("result");
+
+            if (!file) {
+                result.textContent = "Please select a file.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            result.textContent = "Uploading...";
+
+            try {
+                const response = await fetch("http://localhost:3000/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Upload failed");
+                }
+
+                result.textContent = "File uploaded successfully!";
+            } catch (error) {
+                result.textContent = "Error: " + error.message;
+            }
+        }
+    </script>
+
+</body>
+</html>
